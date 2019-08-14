@@ -315,6 +315,11 @@ function install_deps() {
             cd ..
             rm -rf fann
         )
+    elif found_exe brew; then
+        echo "$GREEN Installing packages for macOS...$RESET"
+        #macOS
+        brew install git python3 pygobject libtool libffi libjpg openssl autoconf bison swig glib portaudio mpg123 flac curl jq #Should be using brew bundle
+        echo -e "${YELLOW}Please download Fast Artificial Neural Network (fann) from http://leenissen.dk/fann/wp/help/installing-fann/\n$RESET"
     else
     	echo
         echo -e "${YELLOW}Could not find package manager
@@ -336,7 +341,7 @@ function install_venv() {
     # Force version of pip for reproducability, but there is nothing special
     # about this version.  Update whenever a new version is released and
     # verified functional.
-    curl https://bootstrap.pypa.io/3.3/get-pip.py | "${VIRTUALENV_ROOT}/bin/python" - 'pip==18.0.0'
+    curl https://bootstrap.pypa.io/3.3/get-pip.py | "${VIRTUALENV_ROOT}/bin/python" - 'pip==19.2.2'
     # Function status depending on if pip exists
     [[ -x ${VIRTUALENV_ROOT}/bin/pip ]]
 }
@@ -428,8 +433,8 @@ if ! pip install -r test-requirements.txt ; then
     echo "Warning test requirements wasn't installed, Note: normal operation should still work fine..."
 fi
 
-SYSMEM=$(free | awk '/^Mem:/ { print $2 }')
-MAXCORES=$(($SYSMEM / 512000))
+SYSMEM=$(free | awk '/^Mem:/ { print $2 }') #fails on macOS
+MAXCORES=20 #$(($SYSMEM / 512000))
 MINCORES=1
 CORES=$(nproc)
 
